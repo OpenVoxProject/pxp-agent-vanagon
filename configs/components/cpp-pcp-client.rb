@@ -50,7 +50,7 @@ component 'cpp-pcp-client' do |pkg, settings, platform|
 
     cmake = 'C:/ProgramData/chocolatey/bin/cmake.exe -G "MinGW Makefiles"'
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
-  elsif platform.name =~ /el-[67]|redhatfips-7|sles-1[12]|ubuntu-18.04-amd64/
+  elsif platform.name =~ /el-[6]|redhatfips-7|sles-12/
     # use default that is pl-build-tools
   else
     # These platforms use the default OS toolchain, rather than pl-build-tools
@@ -59,11 +59,17 @@ component 'cpp-pcp-client' do |pkg, settings, platform|
     toolchain = ''
     platform_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]} -Wimplicit-fallthrough=0'"
     special_flags = ' -DENABLE_CXX_WERROR=OFF'
-    cmake = if platform.name =~ /amazon-2-aarch64/
+    cmake = if platform.name =~ /amazon-2-aarch64|el-7/
               '/usr/bin/cmake3'
             else
               'cmake'
             end
+  end
+
+  cmake_cxx_compiler = ''
+  if platform.name =~ /el-7/
+    pkg.environment 'PATH', '/opt/rh/devtoolset-7/root/usr/bin:$(PATH)'
+    cmake_cxx_compiler = '-DCMAKE_CXX_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/g++'
   end
 
   # Boost_NO_BOOST_CMAKE=ON was added while upgrading to boost
@@ -88,6 +94,7 @@ component 'cpp-pcp-client' do |pkg, settings, platform|
           -DBoost_NO_BOOST_CMAKE=ON \
           #{special_flags} \
           #{boost_static_flag} \
+          #{cmake_cxx_compiler} \
           ."
     ]
   end

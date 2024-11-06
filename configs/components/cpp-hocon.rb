@@ -38,8 +38,7 @@ component 'cpp-hocon' do |pkg, settings, platform|
 
     cmake = 'C:/ProgramData/chocolatey/bin/cmake.exe -G "MinGW Makefiles"'
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
-  elsif platform.name =~ /el-[67]|redhatfips-7|sles-1[12]|ubuntu-18.04-amd64/ ||
-        platform.is_aix?
+  elsif platform.name =~ /el-[6]|redhatfips-7|sles-1[12]/ || platform.is_aix
     toolchain = '-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake'
     cmake = '/opt/pl-build-tools/bin/cmake'
   else
@@ -49,11 +48,17 @@ component 'cpp-hocon' do |pkg, settings, platform|
     toolchain = ''
     boost_static_flag = '-DBOOST_STATIC=OFF'
     special_flags = " -DENABLE_CXX_WERROR=OFF -DCMAKE_CXX_FLAGS='#{settings[:cflags]}'"
-    cmake = if platform.name =~ /amazon-2-aarch64/
+    cmake = if platform.name =~ /amazon-2-aarch64|el-7/
               '/usr/bin/cmake3'
             else
               'cmake'
             end
+  end
+
+  cmake_cxx_compiler = ''
+  if platform.name =~ /el-7/
+    pkg.environment 'PATH', '/opt/rh/devtoolset-7/root/usr/bin:$(PATH)'
+    cmake_cxx_compiler = '-DCMAKE_CXX_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/g++'
   end
 
   # Until we build our own gettext packages, disable using locales.
@@ -76,6 +81,7 @@ component 'cpp-hocon' do |pkg, settings, platform|
         #{special_flags} \
         #{boost_static_flag} \
         -DBoost_NO_BOOST_CMAKE=ON \
+        #{cmake_cxx_compiler} \
         ."]
   end
 
