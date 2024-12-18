@@ -73,7 +73,7 @@ component 'pxp-agent' do |pkg, settings, platform|
     cmake = 'C:/ProgramData/chocolatey/bin/cmake.exe -G "MinGW Makefiles"'
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
 
-  elsif platform.name =~ /el-[67]|redhatfips-7|sles-12|ubuntu-18.04-amd64/
+  elsif platform.name =~ /el-[6]|redhatfips-7|sles-12/
     # use default that is pl-build-tools
   elsif platform.name =~ /sles-11/
     special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}' -DENABLE_CXX_WERROR=OFF"
@@ -81,12 +81,18 @@ component 'pxp-agent' do |pkg, settings, platform|
     # These platforms use the default OS toolchain, rather than pl-build-tools
     toolchain = ''
     special_flags += " -DCMAKE_CXX_FLAGS='#{settings[:cflags]} -Wno-deprecated -Wimplicit-fallthrough=0' "
-    special_flags += ' -DENABLE_CXX_WERROR=OFF ' unless platform.name =~ /sles-15/
-    cmake = if platform.name =~ /amazon-2-aarch64/
+    special_flags += ' -DENABLE_CXX_WERROR=OFF '
+    cmake = if platform.name =~ /amazon-2-aarch64|el-7/
               '/usr/bin/cmake3'
             else
               'cmake'
             end
+  end
+
+  cmake_cxx_compiler = ''
+  if platform.name =~ /el-7/
+    pkg.environment 'PATH', '/opt/rh/devtoolset-7/root/usr/bin:$(PATH)'
+    cmake_cxx_compiler = '-DCMAKE_CXX_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/g++'
   end
 
   # Boost_NO_BOOST_CMAKE=ON was added while upgrading to boost
@@ -110,6 +116,7 @@ component 'pxp-agent' do |pkg, settings, platform|
           #{special_flags} \
           #{boost_static_flag} \
           -DBoost_NO_BOOST_CMAKE=ON \
+          #{cmake_cxx_compiler} \
           ."
     ]
   end
