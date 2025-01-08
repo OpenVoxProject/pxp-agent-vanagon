@@ -50,7 +50,7 @@ component 'cpp-pcp-client' do |pkg, settings, platform|
 
     cmake = 'C:/ProgramData/chocolatey/bin/cmake.exe -G "MinGW Makefiles"'
     toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
-  elsif platform.name =~ /el-[6]|redhatfips-7|sles-12/
+  elsif platform.name =~ /el-6|redhatfips-7|sles-12/
     # use default that is pl-build-tools
   else
     # These platforms use the default OS toolchain, rather than pl-build-tools
