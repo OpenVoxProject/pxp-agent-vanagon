@@ -14,7 +14,7 @@ component 'runtime' do |pkg, _settings, platform|
     pkg.build_requires "pl-pdcurses-#{platform.architecture}"
   elsif platform.name == 'sles-11-x86_64'
     pkg.build_requires 'pl-gcc8'
-  elsif platform.name =~ /el-[6]|redhatfips-7|sles-12/
+  elsif platform.name =~ /el-6|redhatfips-7|sles-12/
     pkg.build_requires 'pl-gcc'
   end
 end

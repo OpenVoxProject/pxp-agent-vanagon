@@ -20,7 +20,7 @@ component 'leatherman' do |pkg, settings, platform|
   elsif platform.is_windows?
     pkg.build_requires 'cmake'
     pkg.build_requires "pl-gettext-#{platform.architecture}"
-  elsif platform.name =~ /el-[6]|redhatfips-7|sles-1[12]/
+  elsif platform.name =~ /el-6|redhatfips-7|sles-1[12]/
     pkg.build_requires 'pl-cmake'
     pkg.build_requires 'pl-gettext'
     pkg.build_requires 'runtime'
@@ -94,7 +94,7 @@ component 'leatherman' do |pkg, settings, platform|
     cmake = 'env LD_LIBRARY_PATH=/opt/pl-build-tools/lib64 /opt/pl-build-tools/bin/cmake'
     toolchain = '-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake'
     special_flags += " -DCMAKE_CXX_FLAGS='-Wno-deprecated-declarations -Wno-error=class-memaccess -Wno-error=ignored-qualifiers -Wno-error=catch-value' "
-  elsif platform.name =~ /el-[6]|redhatfips-7|sles-12/
+  elsif platform.name =~ /el-6|redhatfips-7|sles-12/
     toolchain = '-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake'
     cmake = '/opt/pl-build-tools/bin/cmake'
     special_flags += " -DCMAKE_CXX_FLAGS='-Wno-deprecated-declarations' "

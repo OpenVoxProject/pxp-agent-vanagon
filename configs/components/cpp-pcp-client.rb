@@ -62,7 +62,7 @@ component 'cpp-pcp-client' do |pkg, settings, platform|
   elsif platform.name == 'sles-11-x86_64'
     cmake = 'env LD_LIBRARY_PATH=/opt/pl-build-tools/lib64 /opt/pl-build-tools/bin/cmake'
     special_flags = " -DCMAKE_CXX_FLAGS='-Wno-error=implicit-fallthrough -Wno-error=catch-value' "
-  elsif platform.name =~ /el-[6]|redhatfips-7|sles-12/
+  elsif platform.name =~ /el-6|redhatfips-7|sles-12/
     # use default that is pl-build-tools
   else
     # These platforms use the default OS toolchain, rather than pl-build-tools
