@@ -7,9 +7,9 @@ project 'pxp-agent' do |proj|
 
   proj.description 'pxp-agent'
   proj.license 'See components'
-  proj.vendor 'Puppet, Inc.  <info@puppet.com>'
-  proj.homepage 'https://puppet.com'
-  proj.identifier 'com.puppetlabs'
+  proj.vendor 'Vox Pupuli <voxpupuli@groups.io>'
+  proj.homepage 'https://github.com/OpenVoxProject'
+  proj.identifier 'org.voxpupuli'
 
   # pxp-agent inherits most build settings from puppetlabs/puppet-runtime:
   # - Modifications to global settings like flags and target directories should be made in puppet-runtime.
