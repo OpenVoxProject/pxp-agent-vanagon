@@ -7,7 +7,7 @@ project 'pxp-agent' do |proj|
 
   proj.description 'pxp-agent'
   proj.license 'See components'
-  proj.vendor 'Vox Pupuli <voxpupuli@groups.io>'
+  proj.vendor 'Vox Pupuli <openvox@voxpupuli.org>'
   proj.homepage 'https://github.com/OpenVoxProject'
   proj.identifier 'org.voxpupuli'
 
