@@ -9,7 +9,7 @@ namespace :vox do
 
     munged = args[:tag].gsub('-', '.')
     data = <<~DATA
-      {"location":"https://s3.osuosl.org/puppet-artifacts/puppet-runtime/#{args[:tag]}/","version":"#{munged}"}
+      {"location":"https://s3.osuosl.org/openvox-artifacts/puppet-runtime/#{args[:tag]}/","version":"#{munged}"}
     DATA
     File.write('configs/components/puppet-runtime.json', data)
 
