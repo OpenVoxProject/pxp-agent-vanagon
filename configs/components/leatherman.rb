@@ -77,7 +77,7 @@ component 'leatherman' do |pkg, settings, platform|
 
     # Use environment variable set in environment.bat to find locale files
     leatherman_locale_var = "-DLEATHERMAN_LOCALE_VAR='PUPPET_DIR' -DLEATHERMAN_LOCALE_INSTALL='share/locale'"
-  elsif platform.name =~ /el-6|redhatfips-7|sles-12/ || platform.is_aix
+  elsif platform.name =~ /el-6|redhatfips-7|sles-12/ || platform.is_aix?
     toolchain = '-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake'
     cmake = '/opt/pl-build-tools/bin/cmake'
     special_flags += " -DCMAKE_CXX_FLAGS='-Wno-deprecated-declarations' "
