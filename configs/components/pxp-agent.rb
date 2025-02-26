@@ -34,7 +34,7 @@ component 'pxp-agent' do |pkg, settings, platform|
   elsif platform.is_macos?
     cmake = '/usr/local/bin/cmake'
     toolchain = ''
-    special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}' -DENABLE_CXX_WERROR=OFF"
+    special_flags += "-DCMAKE_CXX_FLAGS='#{settings[:cflags]} -Wno-enum-constexpr-conversion' -DENABLE_CXX_WERROR=OFF"
     boost_static_flag = '-DBOOST_STATIC=OFF'
     if platform.is_cross_compiled?
       pkg.environment 'CXX', 'clang++ -target arm64-apple-macos11' if platform.name =~ /osx-11/
