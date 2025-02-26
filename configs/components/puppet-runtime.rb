@@ -27,7 +27,7 @@ component 'puppet-runtime' do |pkg, settings, platform|
                       # of these directories instead:
                       [
                         "tar -xzf #{tarball_name}",
-                        'for d in opt private/etc; do sudo rsync -ka "$${d}/" "/$${d}/"; done'
+                        'for d in opt var private; do sudo rsync -ka "$${d}/" "/$${d}/"; done'
                       ]
                     else
                       ["gunzip -c #{tarball_name} | #{platform.tar} -k -C / -xf -"]
