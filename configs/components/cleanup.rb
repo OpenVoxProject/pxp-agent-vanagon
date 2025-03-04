@@ -16,6 +16,7 @@ component 'cleanup' do |pkg, settings, _platform|
   cleanup_steps << "#{rm} -rf #{settings[:prefix]}/ssl"
   cleanup_steps << "#{rm} -rf #{settings[:prefix]}/usr/local"
   cleanup_steps << "#{rm} -rf #{settings[:prefix]}/CMake"
+  cleanup_steps << "#{rm} -rf #{settings[:libdir]}/*.{la,a}"
 
   if platform.is_windows?
     %w[
