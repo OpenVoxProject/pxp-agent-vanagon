@@ -39,12 +39,15 @@ component 'cpp-hocon' do |pkg, settings, platform|
       special_flags = "-DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG'"
     end
   elsif platform.is_windows?
-    make = "#{settings[:gcc_bindir]}/mingw32-make"
-    pkg.environment 'PATH', "$(shell cygpath -u #{settings[:prefix]}/lib):$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+    make = "/usr/bin/make"
+    pkg.environment 'PATH', "/usr/bin:$(shell cygpath -u #{settings[:prefix]}/lib):$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
     pkg.environment 'CYGWIN', settings[:cygwin]
 
-    cmake = 'C:/ProgramData/chocolatey/bin/cmake.exe -G "MinGW Makefiles"'
-    toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
+    cmake = '/usr/bin/cmake'
+    toolchain = ""
+    special_flags = "-DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc -DCMAKE_CXX_COMPILER=x86_64-w64-mingw32-g++"
+    pkg.environment 'CC', "x86_64-w64-mingw32-gcc"
+    pkg.environment 'CXX', "x86_64-w64-mingw32-g++"
   elsif platform.name =~ /el-6|redhatfips-7|sles-1[12]/
     toolchain = '-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/pl-build-toolchain.cmake'
     cmake = '/opt/pl-build-tools/bin/cmake'
@@ -66,10 +69,9 @@ component 'cpp-hocon' do |pkg, settings, platform|
             end
   end
 
-  cmake_cxx_compiler = ''
   if platform.name =~ /el-7/
     pkg.environment 'PATH', '/opt/rh/devtoolset-7/root/usr/bin:$(PATH)'
-    cmake_cxx_compiler = '-DCMAKE_CXX_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/g++'
+    special_flags += ' -DCMAKE_CXX_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/g++'
   end
 
   # Until we build our own gettext packages, disable using locales.
@@ -92,7 +94,6 @@ component 'cpp-hocon' do |pkg, settings, platform|
         #{special_flags} \
         #{boost_static_flag} \
         -DBoost_NO_BOOST_CMAKE=ON \
-        #{cmake_cxx_compiler} \
         ."]
   end
 
