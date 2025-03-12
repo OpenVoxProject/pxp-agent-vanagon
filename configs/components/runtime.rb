@@ -7,11 +7,6 @@ component 'runtime' do |pkg, _settings, platform|
       pkg.build_requires "pl-gcc-#{platform.architecture}"
       pkg.build_requires "pl-binutils-#{platform.architecture}"
     end
-  elsif platform.is_windows?
-    pkg.build_requires "pl-gdbm-#{platform.architecture}"
-    pkg.build_requires "pl-iconv-#{platform.architecture}"
-    pkg.build_requires "pl-libffi-#{platform.architecture}"
-    pkg.build_requires "pl-pdcurses-#{platform.architecture}"
   elsif platform.name == 'sles-11-x86_64'
     pkg.build_requires 'pl-gcc8'
   elsif platform.name =~ /el-6|redhatfips-7|sles-12/

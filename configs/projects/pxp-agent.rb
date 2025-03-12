@@ -29,7 +29,7 @@ project 'pxp-agent' do |proj|
   proj.setting(:service_conf, File.join(proj.install_root, 'service_conf'))
   proj.setting(:chocolatey_lib, 'C:/ProgramData/chocolatey/lib') if platform.is_windows?
 
-  proj.component 'pl-cmake-patch'
+  proj.component 'pl-cmake-patch' unless platform.is_windows?
   proj.component 'puppet-runtime'
   proj.component 'runtime' if platform.name =~ /el-[67]|redhatfips-7|sles-1[12]|ubuntu-18.04-amd64/ || !platform.is_linux?
 

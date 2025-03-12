@@ -19,7 +19,8 @@ component 'leatherman' do |pkg, settings, platform|
     end
   elsif platform.is_windows?
     pkg.build_requires 'cmake'
-    pkg.build_requires "pl-gettext-#{platform.architecture}"
+    pkg.build_requires 'gettext'
+    pkg.build_requires 'gettext-devel'
   elsif platform.name =~ /el-6|redhatfips-7|sles-1[12]/
     pkg.build_requires 'pl-cmake'
     pkg.build_requires 'pl-gettext'
@@ -35,6 +36,8 @@ component 'leatherman' do |pkg, settings, platform|
   leatherman_locale_var = ''
   special_flags = ''
   boost_static_flag = ''
+  prefix = settings[:prefix]
+  libdir = settings[:libdir]
 
   # cmake on OSX is provided by brew
   # a toolchain is not currently required for OSX since we're building with clang.
@@ -80,13 +83,17 @@ component 'leatherman' do |pkg, settings, platform|
       special_flags += "-DCMAKE_CXX_FLAGS_RELEASE='-O2 -DNDEBUG' -DCMAKE_CXX_FLAGS='-Wno-deprecated-declarations' "
     end
   elsif platform.is_windows?
-    make = "#{settings[:gcc_bindir]}/mingw32-make"
-    pkg.environment 'PATH', "$(shell cygpath -u #{settings[:libdir]}):$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
+    make = "/usr/bin/make"
+    pkg.environment 'PATH', "/usr/bin:$(shell cygpath -u #{settings[:prefix]}/lib):$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
     pkg.environment 'CYGWIN', settings[:cygwin]
 
-    cmake = 'C:/ProgramData/chocolatey/bin/cmake.exe -G "MinGW Makefiles"'
-    toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
-    special_flags += " -DCMAKE_CXX_FLAGS='-Wno-deprecated-declarations' "
+    cmake = '/usr/bin/cmake'
+    toolchain = ''
+    prefix = "$(shell cygpath -u #{prefix})"
+    libdir = "$(shell cygpath -u #{libdir})"
+    special_flags = " -DCMAKE_CXX_FLAGS='-Wno-deprecated-declarations -Wno-format -I../inc/leatherman/curl -D_POSIX_THREAD_SAFE_FUNCTIONS' -DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc -DCMAKE_CXX_COMPILER=x86_64-w64-mingw32-g++"
+    pkg.environment 'CC', "x86_64-w64-mingw32-gcc"
+    pkg.environment 'CXX', "x86_64-w64-mingw32-g++"
 
     # Use environment variable set in environment.bat to find locale files
     leatherman_locale_var = "-DLEATHERMAN_LOCALE_VAR='PUPPET_DIR' -DLEATHERMAN_LOCALE_INSTALL='share/locale'"
@@ -118,10 +125,9 @@ component 'leatherman' do |pkg, settings, platform|
             end
   end
 
-  cmake_cxx_compiler = ''
   if platform.name =~ /el-7/
     pkg.environment 'PATH', '/opt/rh/devtoolset-7/root/usr/bin:$(PATH)'
-    cmake_cxx_compiler = '-DCMAKE_CXX_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/g++'
+    special_flags += ' -DCMAKE_CXX_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/g++'
   end
 
   if platform.is_linux?
@@ -138,20 +144,22 @@ component 'leatherman' do |pkg, settings, platform|
   # to upgrade boost with minimal changes.
   #                                  - Sean P. McDonald 5/19/2020
   pkg.configure do
-    ["#{cmake} \
+    [ <<~CMD
+        #{cmake} \
         #{toolchain} \
         -DLEATHERMAN_GETTEXT=ON \
         -DCMAKE_VERBOSE_MAKEFILE=ON \
-        -DCMAKE_PREFIX_PATH=#{settings[:prefix]} \
-        -DCMAKE_INSTALL_PREFIX=#{settings[:prefix]} \
-        -DCMAKE_INSTALL_RPATH=#{settings[:libdir]} \
+        -DCMAKE_PREFIX_PATH=#{prefix} \
+        -DCMAKE_INSTALL_PREFIX=#{prefix} \
+        -DCMAKE_INSTALL_RPATH=#{libdir} \
         #{leatherman_locale_var} \
         -DLEATHERMAN_SHARED=TRUE \
         #{special_flags} \
         #{boost_static_flag} \
         -DBoost_NO_BOOST_CMAKE=ON \
-        #{cmake_cxx_compiler} \
-        ."]
+        .
+      CMD
+    ]
   end
 
   pkg.build do

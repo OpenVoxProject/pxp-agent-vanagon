@@ -54,11 +54,15 @@ component 'cpp-pcp-client' do |pkg, settings, platform|
       toolchain = "-DCMAKE_TOOLCHAIN_FILE=/opt/pl-build-tools/#{settings[:platform_triple]}/pl-build-toolchain.cmake"
     end
   elsif platform.is_windows?
-    make = "#{settings[:gcc_root]}/bin/mingw32-make"
+    make = "/usr/bin/make"
+    pkg.environment 'PATH', "/usr/bin:$(shell cygpath -u #{settings[:prefix]}/lib):$(shell cygpath -u #{settings[:gcc_bindir]}):$(shell cygpath -u #{settings[:bindir]}):/cygdrive/c/Windows/system32:/cygdrive/c/Windows:/cygdrive/c/Windows/System32/WindowsPowerShell/v1.0"
     pkg.environment 'CYGWIN', settings[:cygwin]
 
-    cmake = 'C:/ProgramData/chocolatey/bin/cmake.exe -G "MinGW Makefiles"'
-    toolchain = "-DCMAKE_TOOLCHAIN_FILE=#{settings[:tools_root]}/pl-build-toolchain.cmake"
+    cmake = '/usr/bin/cmake'
+    toolchain = ""
+    special_flags = "-DCMAKE_C_COMPILER=x86_64-w64-mingw32-gcc -DCMAKE_CXX_COMPILER=x86_64-w64-mingw32-g++"
+    pkg.environment 'CC', "x86_64-w64-mingw32-gcc"
+    pkg.environment 'CXX', "x86_64-w64-mingw32-g++"
   elsif platform.name == 'sles-11-x86_64'
     cmake = 'env LD_LIBRARY_PATH=/opt/pl-build-tools/lib64 /opt/pl-build-tools/bin/cmake'
     special_flags = " -DCMAKE_CXX_FLAGS='-Wno-error=implicit-fallthrough -Wno-error=catch-value' "
@@ -78,10 +82,9 @@ component 'cpp-pcp-client' do |pkg, settings, platform|
             end
   end
 
-  cmake_cxx_compiler = ''
   if platform.name =~ /el-7/
     pkg.environment 'PATH', '/opt/rh/devtoolset-7/root/usr/bin:$(PATH)'
-    cmake_cxx_compiler = '-DCMAKE_CXX_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/g++'
+    special_flags += ' -DCMAKE_CXX_COMPILER=/opt/rh/devtoolset-7/root/usr/bin/g++'
   end
 
   # Boost_NO_BOOST_CMAKE=ON was added while upgrading to boost
@@ -106,7 +109,6 @@ component 'cpp-pcp-client' do |pkg, settings, platform|
           -DBoost_NO_BOOST_CMAKE=ON \
           #{special_flags} \
           #{boost_static_flag} \
-          #{cmake_cxx_compiler} \
           ."
     ]
   end
