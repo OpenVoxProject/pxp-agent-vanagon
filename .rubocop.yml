@@ -39,3 +39,6 @@ Style/StringLiterals:
   Enabled: true
   Exclude:
     - 'configs/platforms/*'
+
+Style/WordArray:
+  Enabled: false

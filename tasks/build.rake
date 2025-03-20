@@ -1,5 +1,3 @@
-require 'open3'
-
 namespace :vox do
   desc 'Build vanagon project with Docker'
   task :build, [:project, :platform] do |_, args|
@@ -12,16 +10,11 @@ namespace :vox do
     abort 'You must provide a platform.' if args[:platform].nil? || args[:platform].empty?
     platform = args[:platform]
 
-    engine = platform =~ /^osx-/ ? 'local' : 'docker'
+    engine = platform =~ /^(osx|windows)-/ ? 'local' : 'docker'
     cmd = "bundle exec build #{project} #{platform} --engine #{engine}"
 
-    puts "Running #{cmd}"
-    exitcode = nil
-    Open3.popen2e(cmd) do |_stdin, stdout_stderr, thread|
-      stdout_stderr.each { |line| puts line }
-      exitcode = thread.value.exitstatus
-      puts "Command finished with status #{exitcode}"
-    end
-    exit exitcode
+    FileUtils.rm_rf('C:/ProgramFiles64Folder/') if platform =~ /^windows-/
+
+    run_command(cmd, silent: false, print_command: true, report_status: true)
   end
 end
