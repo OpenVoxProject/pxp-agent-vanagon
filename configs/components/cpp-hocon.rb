@@ -12,7 +12,7 @@ component 'cpp-hocon' do |pkg, settings, platform|
     toolchain = ''
     cmake = '/usr/local/bin/cmake'
     boost_static_flag = '-DBOOST_STATIC=OFF'
-    special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]}' -DENABLE_CXX_WERROR=OFF"
+    special_flags = "-DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_CXX_FLAGS='#{settings[:cflags]}' -DENABLE_CXX_WERROR=OFF"
     if platform.is_cross_compiled?
       pkg.environment 'CXX', 'clang++ -target arm64-apple-macos11' if platform.name =~ /osx-11/
       pkg.environment 'CXX', 'clang++ -target arm64-apple-macos12' if platform.name =~ /osx-12/

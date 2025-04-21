@@ -42,7 +42,7 @@ component 'leatherman' do |pkg, settings, platform|
     toolchain = ''
     cmake = '/usr/local/bin/cmake'
     boost_static_flag = '-DBOOST_STATIC=OFF'
-    special_flags = "-DCMAKE_CXX_FLAGS='#{settings[:cflags]} -Wno-enum-constexpr-conversion -Wno-deprecated-declarations' -DENABLE_CXX_WERROR=OFF -DLEATHERMAN_MOCK_CURL=FALSE"
+    special_flags = "-DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_CXX_FLAGS='#{settings[:cflags]} -Wno-enum-constexpr-conversion -Wno-deprecated-declarations' -DENABLE_CXX_WERROR=OFF -DLEATHERMAN_MOCK_CURL=FALSE"
     if platform.is_cross_compiled?
       pkg.environment 'CXX', 'clang++ -target arm64-apple-macos11' if platform.name =~ /osx-11/
       pkg.environment 'CXX', 'clang++ -target arm64-apple-macos12' if platform.name =~ /osx-12/
