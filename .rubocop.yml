@@ -21,6 +21,9 @@ Metrics/BlockLength:
 Metrics/BlockNesting:
   Enabled: false
 
+Style/TrailingCommaInArrayLiteral:
+  Enabled: false
+
 Naming/FileName:
   Exclude:
     - 'configs/**/*'
